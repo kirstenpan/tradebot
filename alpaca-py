@@ -1,0 +1,71 @@
+from alpaca.trading.client import TradingClient
+from alpaca.trading.requests import GetAssetsRequest, MarketOrderRequest, LimitOrderRequest
+from alpaca.trading.enums import AssetClass, OrderSide, TimeInForce
+from alpaca.data.historical import StockHistoricalDataClient
+from alpaca.data.requests import StockLatestBarRequest
+import os
+import time
+
+# --- SECRETS ---
+API_KEY = os.getenv('ALPACA_KEY')
+SECRET_KEY = os.getenv('ALPACA_SECRET')
+
+# Clients
+trading_client = TradingClient(API_KEY, SECRET_KEY, paper=True)
+data_client = StockHistoricalDataClient(API_KEY, SECRET_KEY)
+
+def get_tradable_assets():
+    """Finds all stocks that can be traded 24/5."""
+    search_params = GetAssetsRequest(asset_class=AssetClass.US_EQUITY)
+    assets = trading_client.get_all_assets(search_params)
+    # Filter for NMS stocks that Alpaca allows for overnight trading
+    return [a.symbol for a in assets if a.tradable and a.easy_to_borrow]
+
+def get_vibe(symbol):
+    """Checks if the stock is trending up right now."""
+    try:
+        request_params = StockLatestBarRequest(symbol_or_symbols=symbol)
+        latest_bar = data_client.get_stock_latest_bar(request_params)
+        # In a real setup, you'd compare this to a 15-min SMA
+        return True 
+    except:
+        return False
+
+def start_robot():
+    print("24/7 Universe Robot Active.")
+    all_symbols = get_tradable_assets()
+    print(f"Monitoring {len(all_symbols)} potential targets...")
+
+    while True:
+        try:
+            # 1. If we have no position, find a 'hot' stock
+            positions = trading_client.get_all_positions()
+            if not positions:
+                # For simplicity, we'll check a high-volatility subset
+                watchlist = ["TQQQ", "SOXL", "TSLA", "NVDA", "MARA"] 
+                for symbol in watchlist:
+                    if get_vibe(symbol):
+                        print(f"Found opportunity in {symbol}!")
+                        
+                        # Overnight requires LIMIT orders
+                        price = data_client.get_stock_latest_bar(StockLatestBarRequest(symbol_or_symbols=symbol))[symbol].price
+                        
+                        order_data = LimitOrderRequest(
+                            symbol=symbol,
+                            limit_price=price,
+                            qty=1,
+                            side=OrderSide.BUY,
+                            time_in_force=TimeInForce.DAY,
+                            extended_hours=True # Crucial for 24/5
+                        )
+                        trading_client.submit_order(order_data)
+                        break 
+            
+            time.sleep(60) # Wait 1 minute before re-scanning
+            
+        except Exception as e:
+            print(f"Error in loop: {e}")
+            time.sleep(30)
+
+if __name__ == "__main__":
+    start_robot()
