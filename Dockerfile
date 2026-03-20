@@ -1,4 +1,5 @@
 FROM python:3.9-slim
-RUN pip install alpaca-trade-api pandas
-COPY bot.py .
+WORKDIR /app
+COPY . .
+RUN pip install -r requirements.txt
 CMD ["python", "bot.py"]
