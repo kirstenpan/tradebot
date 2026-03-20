@@ -1,61 +1,48 @@
 import alpaca_trade_api as tradeapi
-import pandas as pd
-import time
+import os
+import sys
 
-# --- CONFIGURATION (Get these from Alpaca Paper Dashboard) ---
-API_KEY = "YOUR_API_KEY"
-SECRET_KEY = "YOUR_SECRET_KEY"
+# --- CONFIGURATION (Using GitHub Secrets for Security) ---
+API_KEY = os.getenv('ALPACA_KEY')
+SECRET_KEY = os.getenv('ALPACA_SECRET')
 BASE_URL = "https://paper-api.alpaca.markets"
+SYMBOL = "TQQQ"
 
-SYMBOL = "TQQQ" # 3x Leveraged Nasdaq - high volatility for high gains
-TRAILING_STOP_PERCENT = 5.0 # Sells if it drops 5% from its high
-
-# Initialize API
 api = tradeapi.REST(API_KEY, SECRET_KEY, BASE_URL, api_version='v2')
 
-def get_signal():
-    """Simple trend following: is the price above its 15-min average?"""
-    bars = api.get_bars(SYMBOL, '1Min', limit=15).df
-    ma = bars['close'].mean()
-    current = bars['close'].iloc[-1]
-    return "BUY" if current > ma else "WAIT"
+def run_robot():
+    try:
+        account = api.get_account()
+        if float(account.cash) < 1.0 and not api.list_positions():
+            print("Account empty. Deposit $100 virtual cash in Alpaca.")
+            return
 
-def roll_the_dice():
-    print(f"Robot starting... Goal: Roll $100 into 10x-100x on {SYMBOL}")
-    
-    while True:
-        try:
-            # 1. Check if we are already in a trade
-            try:
-                api.get_position(SYMBOL)
-                print("Holding position... letting it roll.")
-            except:
-                # 2. No position? Look for entry
-                if get_signal() == "BUY":
-                    account = api.get_account()
-                    # Use ALL available buying power (Margin)
-                    buying_power = float(account.buying_power)
-                    current_price = api.get_latest_trade(SYMBOL).price
-                    qty = int(buying_power / current_price)
-                    
-                    if qty > 0:
-                        print(f"BUYING {qty} shares of {SYMBOL} at {current_price}")
-                        api.submit_order(
-                            symbol=SYMBOL,
-                            qty=qty,
-                            side='buy',
-                            type='market',
-                            time_in_force='gtc',
-                            order_class='oto', # One-Triggers-Other
-                            trailing_stop={"trail_percent": TRAILING_STOP_PERCENT}
-                        )
+        # 1. Simple "Vibe" Check (Price vs 15-min average)
+        bars = api.get_bars(SYMBOL, '1Min', limit=15).df
+        current_price = bars['close'].iloc[-1]
+        ma = bars['close'].mean()
+
+        # 2. Check if we already have a position
+        positions = api.list_positions()
+        has_position = any(p.symbol == SYMBOL for p in positions)
+
+        # 3. Execution Logic
+        if current_price > ma and not has_position:
+            # Use 95% of buying power to account for fluctuations
+            qty = int((float(account.buying_power) * 0.95) / current_price)
+            if qty > 0:
+                print(f"BULLISH VIBE: Buying {qty} shares of {SYMBOL}")
+                api.submit_order(
+                    symbol=SYMBOL, qty=qty, side='buy', type='market', 
+                    time_in_force='gtc', order_class='oto',
+                    trailing_stop={"trail_percent": 5.0} # Roll the gains!
+                )
+        elif current_price < ma and has_position:
+            print("BEARISH VIBE: Selling position to protect capital.")
+            api.submit_order(symbol=SYMBOL, qty=qty, side='sell', type='market', time_in_force='gtc')
             
-            # 3. Sleep for 1 minute (Free tier friendly)
-            time.sleep(60)
-            
-        except Exception as e:
-            print(f"Connection error: {e}")
-            time.sleep(10)
+    except Exception as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
-    roll_the_dice()
+    run_robot()
