@@ -134,6 +134,3 @@ The app fetches data in a background thread on startup. Wait ~10–15 seconds an
 
 ---
 
-## 📝 License
-
-For personal and educational use only. Market data is sourced via [yfinance](https://github.com/ranaroussi/yfinance).
