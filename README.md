@@ -2,6 +2,13 @@
 
 A real-time stock portfolio monitoring dashboard with institutional-grade analysis, live price feeds, news aggregation using web-scraping.
 
+# Demo:
+Feature Page:
+<img width="1502" height="904" alt="image" src="https://github.com/user-attachments/assets/21a96549-dcd6-4ade-8b43-e8ed11fcccd7" />
+
+Report Page: 
+<img width="1509" height="893" alt="image" src="https://github.com/user-attachments/assets/2f69ca37-1343-44c2-8f8d-9ad0cab7fd87" />
+
 ---
 
 ## Quick Start
