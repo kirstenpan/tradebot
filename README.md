@@ -1,10 +1,10 @@
-# 📈 TradeBot Dashboard
+# TradeBot Terminal Dashboard
 
-A real-time stock portfolio monitoring dashboard with institutional-grade analysis, live price feeds, news aggregation, and AI-generated directional intelligence.
+A real-time stock portfolio monitoring dashboard with institutional-grade analysis, live price feeds, news aggregation using web-scraping.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -14,7 +14,7 @@ A real-time stock portfolio monitoring dashboard with institutional-grade analys
 
 ---
 
-## 🛠 Installation
+## Installation
 
 ### 1. Clone the repository
 
@@ -68,7 +68,7 @@ Open your browser and navigate to:
 
 ---
 
-## 📊 Features
+## Main Features
 
 - **Live Portfolio Prices** — Real-time price, % change, and volume for all tracked tickers
 - **Market Status** — Countdown to market open/close
@@ -95,14 +95,14 @@ Open your browser and navigate to:
 
 ---
 
-## 🔁 Data Refresh
+## Data Refresh
 
 - Data automatically refreshes every **60 minutes** while the market is open.
-- To force an immediate refresh, click the **"↻ Refresh Data"** button on the dashboard.
+- To force an immediate refresh, click the **"↻ MANUAL TRIGGER SYNC"** button on the dashboard.
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 ```
 tradebot/
@@ -116,7 +116,7 @@ tradebot/
 
 ---
 
-## ⚠️ Troubleshooting
+## Troubleshooting
 
 **Port already in use:**
 ```bash
@@ -130,7 +130,7 @@ kill -9 <PID>
 Make sure your virtual environment is activated before running `python app.py`.
 
 **Blank page / no data:**
-The app fetches data in a background thread on startup. Wait ~10–15 seconds and then click **"↻ Refresh Data"**.
+The app fetches data in a background thread on startup. Wait ~10–15 seconds and then click **"↻ MANUAL TRIGGER SYNC"**.
 
 ---
 
