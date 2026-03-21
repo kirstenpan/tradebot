@@ -17,7 +17,7 @@ Report Page:
 
 - **Python 3.9+** — [Download here](https://www.python.org/downloads/)
 - **pip** (comes bundled with Python)
-- Internet connection (live data is pulled from Yahoo Finance)
+- Internet connection (live data is pulled from Yahoo Finance and FINVIZ)
 
 ---
 
