@@ -70,9 +70,27 @@
         }
 
         @keyframes pulse-animation {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .pulse.red {
+            background-color: var(--down);
+            box-shadow: 0 0 10px var(--down);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .pulse.green {
+            background-color: var(--up);
+            box-shadow: 0 0 10px var(--up);
+            animation: pulse-animation 2s infinite;
         }
 
         .status-text {
@@ -80,6 +98,31 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
         }
 
         .grid {
@@ -150,11 +193,28 @@
         .down-text { color: var(--down); text-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
 
         .volume {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
             margin-top: 1rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 350px;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .chart-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .terminal-feed {
@@ -240,13 +300,13 @@
 
         .modal-content {
             background-color: var(--surface);
-            margin: 10% auto; 
-            padding: 2.5rem;
-            border: 1px solid var(--accent);
-            border-radius: 12px;
+            margin: 5% auto; 
+            padding: 3rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
             width: 80%;
-            max-width: 700px;
-            box-shadow: 0 0 40px rgba(216, 195, 125, 0.15);
+            max-width: 900px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
             position: relative;
             transform: translateY(20px);
             animation: modalPop 0.4s ease forwards;
@@ -346,26 +406,23 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div class="analysis-header">
                 <h2 id="modalTicker">TICKER</h2>
-                <div id="modalPrice" style="font-size: 1.5rem; font-weight: 600;">$0.00</div>
-            </div>
-            
-            <div class="analysis-section">
-                <h3>Macro Verdict</h3>
-                <p id="modalVerdict" style="font-weight: 600;"></p>
-            </div>
-            
-            <div class="analysis-section">
-                <div id="modalAnalysisText"></div>
+                <div id="modalPrice" style="font-size: 1.5rem; font-weight: 600; color: var(--accent);">--</div>
             </div>
 
-            <div class="analysis-section" id="modalProgressBarSection" style="display: none;">
-                <h3>Trajectory: 200d MA to Target Price</h3>
+            <div class="chart-container" id="modalChartContainer">
+                <!-- Finviz chart will be injected here -->
+            </div>
+            
+            <div id="modalAnalysisText"></div>
+
+            <div class="analysis-section" id="modalProgressBarSection" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                <h3 style="text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;">Trajectory Path: 200D MA TO TARGET MEAN</h3>
                 <div class="progress-bar-container">
                     <div class="progress-bar-fill" id="modalProgressFill"></div>
                 </div>
                 <div class="progress-labels">
                     <span id="modalMA200">MA200: $0.00</span>
-                    <span id="modalTarget">Target: $0.00</span>
+                    <span id="modalTarget">TARGET: $0.00</span>
                 </div>
             </div>
         </div>
@@ -374,10 +431,13 @@
     <div class="header">
         <div class="title">
             <h1>Team J&K Terminal</h1>
-            <div class="pulse"></div>
-            <span class="status-text">Live Institutional Feed</span>
+            <div id="marketDot" class="pulse red"></div>
+            <div class="status-text">
+                <span id="marketStatus">Initializing...</span>
+                <button class="refresh-btn" onclick="handleRefresh()">Manual Trigger Sync</button>
+                <div id="currentTime" style="color: var(--accent);">--:--:-- EST</div>
+            </div>
         </div>
-        <div class="status-text" id="clock">00:00:00</div>
     </div>
 
     <div class="grid" id="portfolio-grid">
@@ -386,11 +446,11 @@
 
     <div class="terminal-feed">
         <div class="terminal-header">
-            <span>></span> Macro-Economic Alert Feed
+            <span>[SYS]</span> Institutional Intelligence Feed
         </div>
         <div class="feed-entries" id="alerts">
-            <div class="feed-entry">> Establishing secure institutional connection... OK</div>
-            <div class="feed-entry">> Premier Macroeconomist AI Online. Waiting for deviations...</div>
+            <div class="feed-entry">> Initializing secure institutional handshake... OK</div>
+            <div class="feed-entry">> Asset monitors active. Awaiting macro variance...</div>
         </div>
     </div>
 
@@ -400,23 +460,26 @@
             const boot = document.getElementById('boot-sequence');
             boot.style.opacity = '0';
             setTimeout(() => boot.style.display = 'none', 1000);
-            fetchData();
+            updateDashboard();
         }, 1500);
-
-        // Clock
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false }) + ' EST';
-        }, 1000);
 
         function formatNumber(num) {
             return new Intl.NumberFormat('en-US').format(num);
         }
 
-        async function fetchData() {
+        async function updateDashboard() {
             try {
                 const res = await fetch('/api/portfolio');
                 const result = await res.json();
                 
+                // Update Market Status
+                if (result.market) {
+                    const statusSpan = document.getElementById('marketStatus');
+                    const dot = document.getElementById('marketDot');
+                    statusSpan.innerText = result.market.status;
+                    dot.className = `pulse ${result.market.color}`;
+                }
+
                 const grid = document.getElementById('portfolio-grid');
                 grid.innerHTML = '';
                 
@@ -427,7 +490,6 @@
                     const sign = isUp ? '+' : '';
                     const colorClass = isUp ? 'up' : 'down';
                     const textClass = isUp ? 'up-text' : 'down-text';
-                    const arrow = isUp ? '▲' : '▼';
                     
                     // Display fallback if 0
                     const priceDisp = data.price > 0 ? `$${data.price.toFixed(2)}` : 'Loading...';
@@ -443,7 +505,6 @@
                         </div>
                         <div class="ticker-price">${priceDisp}</div>
                         <div class="ticker-change ${textClass}">
-                            <span>${arrow}</span>
                             <span>${changeDisp}</span>
                         </div>
                         <div class="volume">VOL: ${formatNumber(data.vol)}</div>
@@ -456,7 +517,13 @@
                 if (result.alerts.length > 0) {
                     alertsDiv.innerHTML = '';
                     result.alerts.forEach(alert => {
-                        alertsDiv.innerHTML += `<div class="feed-entry alert-entry">> ${alert}</div>`;
+                        let alertClass = 'alert-entry';
+                        if (alert.includes('NEWS:')) {
+                            alertClass = 'news';
+                        } else if (alert.includes('VOLUME ALERT:')) {
+                            alertClass = 'volume';
+                        }
+                        alertsDiv.innerHTML += `<div class="feed-entry ${alertClass}">>> ${alert}</div>`;
                     });
                 }
             } catch (error) {
@@ -467,11 +534,11 @@
         async function openAnalysis(ticker) {
             const modal = document.getElementById('analysisModal');
             document.getElementById('modalTicker').innerText = ticker + " Analysis...";
-            document.getElementById('modalPrice').innerText = "Loading...";
-            document.getElementById('modalVerdict').innerText = "Fetching real-time intelligence...";
-            document.getElementById('modalAnalysisText').innerHTML = "";
+            document.getElementById('modalPrice').innerText = "CALCULATING...";
+            document.getElementById('modalAnalysisText').innerHTML = '<div style="margin-top:2rem;color:var(--text-secondary);font-family:monospace;">>> Accessing research database...</div>';
             document.getElementById('modalProgressBarSection').style.display = "none";
             document.getElementById('modalProgressFill').style.width = "0%";
+            document.getElementById('modalChartContainer').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-secondary);font-family:monospace;">INITIALIZING DATASTREAM...</div>';
             
             modal.classList.add('show');
             
@@ -480,25 +547,25 @@
                 const data = await res.json();
                 
                 if (data.error) {
-                    document.getElementById('modalVerdict').innerText = data.error;
+                    document.getElementById('modalAnalysisText').innerHTML = `<div style="color:var(--down);">${data.error}</div>`;
                     return;
                 }
                 
-                document.getElementById('modalTicker').innerText = data.ticker + " // PRO ANALYSIS";
-                document.getElementById('modalPrice').innerText = '$' + data.current_price.toFixed(2);
+                document.getElementById('modalTicker').innerText = data.ticker + " // INSTITUTIONAL EQUITY REPORT";
+                document.getElementById('modalPrice').innerText = '$' + data.current_price.toFixed(2) + ' (' + (data.change_pct >= 0 ? '+' : '') + data.change_pct.toFixed(2) + '%)';
                 
-                const verdictEl = document.getElementById('modalVerdict');
-                verdictEl.innerText = data.macro_verdict;
-                verdictEl.style.color = data.macro_verdict.includes('Buy') ? 'var(--up)' : (data.macro_verdict.includes('Sell') ? 'var(--down)' : 'var(--text-primary)');
-                
+                // Inject Chart
+                const chartUrl = `https://charts2.finviz.com/chart.ashx?t=${data.ticker}&ty=c&ta=1&p=d&s=l`;
+                document.getElementById('modalChartContainer').innerHTML = `<img src="${chartUrl}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.innerHTML='Chart unavailable'">`;
+
                 // Inject the raw HTML report directly
                 const analysisContainer = document.getElementById('modalAnalysisText');
                 analysisContainer.innerHTML = data.html_report;
 
                 // Render Progress Bar
                 document.getElementById('modalProgressBarSection').style.display = "block";
-                document.getElementById('modalMA200').innerText = 'MA200: $' + data.ma200.toFixed(2);
-                document.getElementById('modalTarget').innerText = 'Target: $' + data.target_price.toFixed(2);
+                document.getElementById('modalMA200').innerText = 'BASE 200D MA: $' + data.ma200.toFixed(2);
+                document.getElementById('modalTarget').innerText = 'CONSENSUS TARGET: $' + data.target_price.toFixed(2);
                 
                 // Animate progress bar fill after a tiny delay
                 setTimeout(() => {
@@ -506,7 +573,7 @@
                 }, 100);
                 
             } catch (e) {
-                document.getElementById('modalVerdict').innerText = "Error fetching analysis.";
+                document.getElementById('modalAnalysisText').innerHTML = '<div style="color:var(--down);">ERROR: ENCRYTION HANDSHAKE FAILED. DATASTREAM INTERRUPTED.</div>';
             }
         }
         
@@ -522,8 +589,38 @@
             }
         }
 
-        // Poll every 3 seconds
-        setInterval(fetchData, 3000);
+        async function handleRefresh() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.innerText = "Synchronizing...";
+            btn.disabled = true;
+            try {
+                await fetch('/api/refresh', { method: 'POST' });
+                setTimeout(() => {
+                    updateDashboard();
+                    btn.innerText = "Manual Trigger Sync";
+                    btn.disabled = false;
+                }, 3000);
+            } catch (e) {
+                btn.innerText = "Error";
+                btn.disabled = false;
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('currentTime').innerText = timeStr + " EST";
+        }
+
+        // Auto-refresh clock
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Initial update
+        updateDashboard();
+        // The user requested 1-hour updates, but UI typically polls faster to show the result of a fetch.
+        // We poll the API for data every 5 seconds, even if the backend only fetches once an hour.
+        setInterval(updateDashboard, 5000);
     </script>
 </body>
 </html>
