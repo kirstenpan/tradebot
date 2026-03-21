@@ -4,133 +4,68 @@ A real-time stock portfolio monitoring dashboard with institutional-grade analys
 
 ---
 
-## Quick Start
+Quick Start for New Users
+Follow these steps to get the dashboard running on your local machine.
 
-### Prerequisites
+1. Clone the Repository
+Open your terminal and run:
 
-- **Python 3.9+** — [Download here](https://www.python.org/downloads/)
-- **pip** (comes bundled with Python)
-- Internet connection (live data is pulled from Yahoo Finance)
-
----
-
-## Installation
-
-### 1. Clone the repository
-
-```bash
+Bash
 git clone https://github.com/kirstenpan/tradebot.git
 cd tradebot
-```
+2. Set Up a Virtual Environment (Recommended)
+This ensures the app's dependencies don't interfere with your global Python settings.
 
-### 2. Create a virtual environment
+macOS / Linux:
 
-```bash
+Bash
 python3 -m venv venv
-```
-
-### 3. Activate the virtual environment
-
-**macOS / Linux:**
-```bash
 source venv/bin/activate
-```
+Windows:
 
-**Windows:**
-```bash
-venv\Scripts\activate
-```
+Bash
+python -m venv venv
+.\venv\Scripts\activate
+3. Install Dependencies
+Install the required libraries (Flask, yfinance, etc.) using the included "grocery list":
 
-### 4. Install dependencies
-
-```bash
+Bash
 pip install -r requirements.txt
-```
-
----
-
-## ▶️ Running the App
-
-```bash
+4. Run the Application
+Bash
 python app.py
-```
+Using the Dashboard
+Once the app is running, open your browser and go to:
+http://localhost:8080
 
-You should see output like:
+Key Features
+Live Portfolio Tracking: Real-time data for VOO, QQQ, and high-conviction silver/mining stocks (AG, EXK, HL, etc.).
 
-```
- * Serving Flask app 'app'
- * Running on http://127.0.0.1:8080
-```
+Institutional Intelligence: Automated reports and news aggregation for every ticker in the portfolio.
 
-Open your browser and navigate to:
+Manual Sync: Use the "↻ MANUAL TRIGGER SYNC" button to force a data refresh if the market is moving fast.
 
-**[http://localhost:8080](http://localhost:8080)**
-
----
-
-## Main Features
-
-- **Live Portfolio Prices** — Real-time price, % change, and volume for all tracked tickers
-- **Market Status** — Countdown to market open/close
-- **Intelligence Reports** — Click any ticker to generate a full institutional analysis report
-- **News Feed** — Top headlines per ticker aggregated automatically
-- **Volume Anomaly Alerts** — Flags tickers with abnormal trading volume
-- **Manual Refresh** — Trigger an immediate data refresh at any time
-
-### Tracked Portfolio
-
-| Ticker | Description |
-|--------|-------------|
-| VOO | Vanguard S&P 500 ETF |
-| QQQ | Invesco NASDAQ-100 ETF |
-| GOOG | Alphabet Inc. |
-| AG | First Majestic Silver |
-| EXK | Endeavour Silver Corp |
-| HL | Hecla Mining |
-| ITRG | Integra Resources |
-| UAMY | US Antimony Corp |
-| NB | NioCorp Developments |
-| MTA | Metalla Royalty & Streaming |
-| UPS | United Parcel Service |
-
----
-
-## Data Refresh
-
-- Data automatically refreshes every **60 minutes** while the market is open.
-- To force an immediate refresh, click the **"↻ MANUAL TRIGGER SYNC"** button on the dashboard.
-
----
-
-## Project Structure
-
-```
+Project Structure
+Plaintext
 tradebot/
-├── app.py              # Main Flask application & data logic
-├── templates/
-│   └── dashboard.html  # Frontend dashboard UI
-├── test_news.py        # News feed test script
-├── test_yf.py          # Yahoo Finance connectivity test
-└── README.md
-```
+├── app.py              # Core logic, Flask server, and data fetching
+├── templates/          # Frontend UI (HTML/CSS)
+│   └── dashboard.html  
+├── requirements.txt    # List of necessary Python libraries
+├── .gitignore          # Prevents bulky 'venv' files from being uploaded
+├── test_news.py        # Utility for testing news scraping logic
+└── test_yf.py          # Utility for testing Yahoo Finance API
+Troubleshooting
+"ModuleNotFoundError"
+Ensure you have activated your virtual environment (Step 3) before running the app. You should see (venv) at the start of your terminal line.
 
----
+Port 8080 is Busy
+If another app is using port 8080, you can kill the process:
 
-## Troubleshooting
+Mac: lsof -i :8080 then kill -9 [PID]
 
-**Port already in use:**
-```bash
-# Find the process using port 8080
-lsof -i :8080
-# Kill it
-kill -9 <PID>
-```
+Windows: netstat -ano | findstr :8080 then taskkill /PID [PID] /F
 
-**Module not found errors:**
-Make sure your virtual environment is activated before running `python app.py`.
-
-**Blank page / no data:**
-The app fetches data in a background thread on startup. Wait ~10–15 seconds and then click **"↻ MANUAL TRIGGER SYNC"**.
-
----
+Data is Blank on Startup
+The app fetches institutional data in the background. If the table is empty, wait 15 seconds and click the Manual Trigger Sync button to populate the dashboard.
 
