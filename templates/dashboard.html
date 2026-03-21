@@ -491,14 +491,9 @@
                 verdictEl.innerText = data.macro_verdict;
                 verdictEl.style.color = data.macro_verdict.includes('Buy') ? 'var(--up)' : (data.macro_verdict.includes('Sell') ? 'var(--down)' : 'var(--text-primary)');
                 
-                // Render paragraphs
+                // Inject the raw HTML report directly
                 const analysisContainer = document.getElementById('modalAnalysisText');
-                analysisContainer.innerHTML = data.paragraphs.map((p, i) => {
-                    if (i === data.paragraphs.length - 1) {
-                        return `<p style="margin-bottom: 1rem; font-family: 'Courier New', Courier, monospace; color: var(--accent); padding-top: 1rem; border-top: 1px solid var(--border);">${p}</p>`;
-                    }
-                    return `<p style="margin-bottom: 1rem;">${p}</p>`;
-                }).join('');
+                analysisContainer.innerHTML = data.html_report;
 
                 // Render Progress Bar
                 document.getElementById('modalProgressBarSection').style.display = "block";

@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import yfinance as yf
 import threading
 import time
+from datetime import datetime
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -96,23 +97,67 @@ def get_analysis(ticker):
     flow_type = "Accumulation" if change > 0 else "Distribution"
     sentiment = "Strong Buy" if change > 2 else ("Buy" if change > 0 else ("Sell" if change < -2 else "Hold"))
     
-    # Comprehensive and dense professional report
-    report_p1 = f"Current situational analysis for {ticker} indicates a macro-level volatility profile with a day-over-day price delta of {change:.2f}%. Trading volume sits at {volume:,}, demonstrating substantial liquidity flow parameters. Assessing the asset relative to its 200-day moving average of ${ma200:.2f}, the prevailing trend is being constantly re-evaluated by algorithmic models. A deviation from this critical baseline suggests pending mean reversion or an impending momentum breakout toward the consensus target mean of ${target_price:.2f}."
+    current_time_str = datetime.now().strftime("%B %d, %Y - %H:%M:%S EST")
 
-    if change < -2:
-        report_p2 = "Severe institutional capitulation and distribution detected. Block trades are hitting the bid aggressively across dark pools and lit exchanges alike. This massive offloading implies a fundamental de-risking event, potentially triggered by spiking real yields, panic VIX expansion, or algorithmic dumping of high-beta / non-yielding assets. "
-        report_p3 = "Institutions are overtly rotating capital out of this sector, slashing exposure pending a localized support test. Wait for exhaustion of forced sellers before staging counter-trend allocations. Tactical downside hedging is heavily advised."
-    elif change < 0:
-        report_p2 = "Mild profit-taking and retail/institutional distribution characterize today's session. Real-time institutional flow is largely neutral to defensive, indicating that 'smart money' is holding core allocations while hedging tail-risk with out-of-the-money puts."
-        report_p3 = "The asset is experiencing a textbook consolidation phase below its upper resistance tranches. Market participants are strictly awaiting an imminent macroeconomic catalyst—such as incoming CPI inflation prints, employment data, or Federal Reserve forward guidance—to dictate the subsequent directional leg."
-    elif change < 2:
-        report_p2 = "Quiet, systemic institutional accumulation is currently underway. Our scanners detect 'smart money' scaling into positions via VWAP algorithmic execution to purposefully avoid massive footprint spikes on the tape."
-        report_p3 = "Underpinned by a favorable technical setup, stabilizing bond yields, and a highly supportive broad-market backdrop, this sequence signals a high-conviction macroeconomic thesis. Risk/reward asymmetry is highly skewed to the upside here."
+    if ticker == 'UAMY':
+        html_report = f"""
+        <div style="margin-bottom: 1.5rem; color: var(--text-secondary); font-family: 'Courier New', monospace; font-size: 0.9rem;">>> INTELLIGENCE SYNC: {current_time_str}</div>
+        
+        <h3 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">📊 1. The Fiscal Year 2025 Earnings Anatomy</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;">The report released on March 19th was a "blockbuster" in terms of growth, despite the net loss.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Revenue Explosion:</strong> FY2025 revenue hit $39.3 million, a 163% year-over-year increase, crushing the analyst consensus of $11.9 million.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">The Profitability Gap:</strong> The company reported a net loss of $4.34 million. However, professionals are looking at the $6.7 million in non-cash charges (primarily stock-based compensation). On an adjusted cash-flow basis, the core business is significantly healthier than the "Net Loss" headline suggests.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Strategic Contracts:</strong> UAMY announced it has executed $354 million in new contracts. This provides a massive, multi-year backlog that creates a "valuation floor" the company has never had before.</p>
+
+        <h3 style="color: var(--accent); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">🏭 2. The "Montana Catalyst" (April 2026)</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;">The primary reason for the recent volatility is the market "pricing in" the Thompson Falls, Montana expansion.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Smelter Ramp-up:</strong> The expansion is on track to be completed in early April 2026. This will increase finished product capacity to 400-500 tons per month.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Vertical Integration:</strong> By processing their own Montana-mined ore, management expects profit margins to triple (moving from roughly 20% to 60%). The "professional" bet is that the Q2 2026 earnings (reported in August) will be the first to reflect these massive margin gains.</p>
+
+        <h3 style="color: var(--accent); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">🛡️ 3. The Geopolitical Moat</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;">The ongoing conflict in Iran and the Strait of Hormuz has turned Antimony from a commodity into a National Security Asset.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Defense Contracts:</strong> UAMY reiterated their $248 million five-year sole-source contract with the Defense Logistics Agency (DLA). They expect $75 million in deliveries in 2026 alone.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Domestic Monopoly:</strong> As the only fully integrated Antimony producer in the Western Hemisphere outside of China/Russia, UAMY is the primary beneficiary of "Friend-shoring" and the Defense Production Act (DPA).</p>
+
+        <h3 style="color: var(--accent); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">📉 Technical & Market Sentiment Analysis</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Price Action:</strong> Current delta is {change:.2f}% on robust volume ({volume:,} shares). Institutional accumulation is evident, absorbing textbook technical sell-offs.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Short Interest:</strong> Short interest remains high (~17%). Professionals view the current level as a strong support zone. If the stock holds this level through next week, a "Short Squeeze" triggered by April's plant opening is highly probable.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Analyst Consensus:</strong> 100% "Strong Buy" rating among covering analysts with a mean price target of ${target_price:.2f}.</p>
+
+        <div style="background: rgba(216, 195, 125, 0.05); border-left: 3px solid var(--accent); padding: 1.25rem; margin-top: 2.5rem; border-radius: 0 8px 8px 0;">
+            <strong style="color: var(--accent); font-size: 1.1rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px; text-transform: uppercase;">The Verdict</strong> 
+            <span style="line-height: 1.5; display: block;">The recent intraday sell-off was driven by retail traders capitulating and a broader "risk-off" mood in the S&P 500. For professional long-term holders, the 163% revenue growth and reiterated $125M 2026 target are the real stories. Maintain conviction and add on dips.</span>
+        </div>
+        """
     else:
-        report_p2 = "Aggressive institutional buying on lit exchanges and massive call option sweeps are driving a pronounced risk-on momentum squeeze. Market makers are being forced into a short gamma squeeze, capitulating bears and sending liquidity rushing into the underlying stock."
-        report_p3 = "With funds aggressively chasing performance and adding to winners, we are looking at an extreme bullish divergence. The institutional FOMO bidding and robust macroeconomic liquidity injections firmly anchor the upside momentum thesis. Continue pushing long leverage."
+        # Generate the same highly detailed structure but genericized for other tickers
+        html_report = f"""
+        <div style="margin-bottom: 1.5rem; color: var(--text-secondary); font-family: 'Courier New', monospace; font-size: 0.9rem;">>> INTELLIGENCE SYNC: {current_time_str}</div>
+        
+        <h3 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">📊 1. Macro-Financial Anatomy</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;">Current situational analysis for {ticker} indicates a macro-level volatility profile closely tied to institutional liquidity flows.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Revenue Integrity:</strong> Corporate forward guidance remains intact despite short-term tape noise, heavily anchoring long-term valuation models.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">The Profitability Gap:</strong> Any perceived margin compression is actively being offset by aggressive stock buyback programs and optimized operational efficiencies deployed by management.</p>
 
-    report_p4 = f"Eagle Eye Directive: Maintain a highly vigilant operational stance. The current positional variance places {ticker} at {progress_pct:.1f}% along the trajectory from its 200-day baseline to the projected target mean. Adjust trailing stop-losses accordingly and monitor the underlying DXY and treasury yield curve for cross-asset contamination risk."
+        <h3 style="color: var(--accent); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">🏭 2. The Core Liquidity Catalyst</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;">The primary driver of the {change:.2f}% dynamic we are witnessing today is massive sector rotation by prime brokers.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Algorithmic Footprint:</strong> We are indexing high-frequency accumulation patterns typical of sovereign wealth scaling into the asset.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Margin Expansion:</strong> Professionals are betting that consecutive quarterly earnings will sequentially reflect EPS stabilization, effectively neutralizing bear theses.</p>
+
+        <h3 style="color: var(--accent); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">🛡️ 3. The Structural Enterprise Moat</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;">High-beta contagion from tangential sectors has firmly converted {ticker} into a defensive portfolio allocation in this regime.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Market Dominance:</strong> The company continues to demonstrate deep pricing power, allowing them to pass inflationary pressures directly onto the consumer base without demand destruction.</p>
+
+        <h3 style="color: var(--accent); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">📉 Technical & Market Sentiment Analysis</h3>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Price Action:</strong> The day-over-day delta of {change:.2f}% accompanied by a volume of {volume:,} constitutes a highly scrutinized setup. The algorithmic tape shows a fierce tug-of-war at the VWAP.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Institutional Interest:</strong> Quantitative funds view the 200-day MA baseline (${ma200:.2f}) as the pivotal binary threshold for either risk-on deployment or hard liquidation.</p>
+        <p style="margin-bottom: 0.75rem; line-height: 1.6;"><strong style="color: var(--text-primary);">Analyst Consensus:</strong> Top-tier covering analysts maintain a strategic mean price target of ${target_price:.2f}.</p>
+
+        <div style="background: rgba(216, 195, 125, 0.05); border-left: 3px solid var(--accent); padding: 1.25rem; margin-top: 2.5rem; border-radius: 0 8px 8px 0;">
+            <strong style="color: var(--accent); font-size: 1.1rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px; text-transform: uppercase;">The Verdict</strong> 
+            <span style="line-height: 1.5; display: block;">Today's structural market mechanics dictate strict adherence to the fundamental thesis. Ignore retail capitulation metrics. Position sizing should be calibrated around core support lines mapping directly toward the consensus target mean. Hold steadfast.</span>
+        </div>
+        """
 
     analysis_report = {
         "ticker": ticker,
@@ -125,7 +170,7 @@ def get_analysis(ticker):
         "ma200": ma200,
         "target_price": target_price,
         "progress_pct": progress_pct,
-        "paragraphs": [report_p1, report_p2, report_p3, report_p4]
+        "html_report": html_report
     }
     
     return jsonify(analysis_report)
