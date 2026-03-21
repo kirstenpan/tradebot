@@ -1,4 +1,4 @@
-# TradeBot Terminal Dashboard
+# TradeBot Terminal
 
 A real-time stock portfolio monitoring dashboard with institutional-grade analysis, live price feeds, news aggregation using web-scraping.
 
