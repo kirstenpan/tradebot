@@ -6,6 +6,9 @@ A real-time stock portfolio monitoring dashboard with institutional-grade analys
 Feature Page:
 <img width="1502" height="904" alt="image" src="https://github.com/user-attachments/assets/21a96549-dcd6-4ade-8b43-e8ed11fcccd7" />
 
+Live Updates Rolling Bar:
+<img width="1491" height="442" alt="image" src="https://github.com/user-attachments/assets/1091b241-a36a-49f1-9b96-4e2c582a26b3" />
+
 Report Page: 
 <img width="1509" height="893" alt="image" src="https://github.com/user-attachments/assets/2f69ca37-1343-44c2-8f8d-9ad0cab7fd87" />
 
