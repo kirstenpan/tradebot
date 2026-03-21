@@ -44,7 +44,7 @@ venv\Scripts\activate
 ### 4. Install dependencies
 
 ```bash
-pip install flask yfinance
+pip install -r requirements.txt
 ```
 
 ---

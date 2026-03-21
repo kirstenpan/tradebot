@@ -62,18 +62,25 @@ def fetch_data():
                     if ticker_obj:
                         fast = ticker_obj.fast_info
                         info = ticker_obj.info
-                        
+
                         price = fast.last_price
                         prev_close = fast.previous_close
-                        change_pct = ((price - prev_close) / prev_close) * 100 if prev_close else 0.0
                         vol = fast.last_volume
-                        avg_vol = info.get('averageVolume', 1)
-                        
+
+                        # Skip if core fields are unavailable (e.g. halted / pre-market)
+                        if price is None or vol is None:
+                            continue
+
+                        price = float(price)
+                        vol = int(vol)
+                        change_pct = ((price - prev_close) / prev_close) * 100 if prev_close else 0.0
+                        avg_vol = int(info.get('averageVolume') or 1)
+
                         market_data[t] = {
                             'price': round(price, 2),
                             'change_pct': round(change_pct, 2),
-                            'vol': int(vol),
-                            'avg_vol': int(avg_vol),
+                            'vol': vol,
+                            'avg_vol': avg_vol,
                             'status': 'Live'
                         }
                         
@@ -173,7 +180,7 @@ def get_analysis(ticker):
     if total_range <= 0:
         total_range = 1 # avoid div by zero
     progress_pct = ((price - ma200) / total_range) * 100
-    progress_pct = max(0, min(100, progress_pct)) # clamp 0 to 100 for UI purposes
+    progress_pct = max(0.0, min(100.0, progress_pct))  # clamp 0–100 for UI
     
     # Generate dynamic "professional trader" analysis based on metrics
     trend = "BULLISH ACCUMULATION" if change > 0 else "BEARISH DISTRIBUTION (LIQUIDATION)"
@@ -205,7 +212,7 @@ def get_analysis(ticker):
         ma200 = 8.17 # Intraday low/Floor
         target_price = 17.00 # H.C. Wainwright / BMO
         pivot = 10.25
-        progress_pct = max(0, min(100, ((price - ma200) / (target_price - ma200)) * 100)) if target_price > ma200 else 0
+        progress_pct = max(0.0, min(100.0, ((price - ma200) / (target_price - ma200)) * 100)) if target_price > ma200 else 0.0
         sentiment = "Moderate Buy (Strategic Accumulation)"
 
         html_report = f"""
