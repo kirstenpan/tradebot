@@ -2,6 +2,15 @@
 
 A real-time stock portfolio monitoring dashboard with institutional-grade analysis, live price feeds, news aggregation using web-scraping.
 
+---
+
+## Data Refresh
+
+- Data automatically refreshes every **60 minutes** while the market is open.
+- To force an immediate refresh, click the **"↻ MANUAL TRIGGER SYNC"** button on the dashboard.
+
+---
+
 # Demo:
 Feature Page:
 <img width="1502" height="904" alt="image" src="https://github.com/user-attachments/assets/21a96549-dcd6-4ade-8b43-e8ed11fcccd7" />
@@ -102,13 +111,6 @@ Open your browser and navigate to:
 | NB | NioCorp Developments |
 | MTA | Metalla Royalty & Streaming |
 | UPS | United Parcel Service |
-
----
-
-## Data Refresh
-
-- Data automatically refreshes every **60 minutes** while the market is open.
-- To force an immediate refresh, click the **"↻ MANUAL TRIGGER SYNC"** button on the dashboard.
 
 ---
 
